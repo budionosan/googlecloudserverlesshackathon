@@ -1,0 +1,48 @@
+<html>
+<body>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.1/dist/css/bootstrap.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.1/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@1.3.1/dist/tf.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@teachablemachine/image@0.8/dist/teachablemachine-image.min.js"></script>
+    <center>
+        <h1>TRASH RECYCLE CLASSIFICATION</h1>
+        <h2>This project about classification of trash with recycle description (recycleable and organic) with machine learning.</h2>
+        <h3><b>The Issue</b></h3>
+        <h4>Trash are is problem that related with environment and climate change, even plastics trash also added problem because plastics trash is very hard for recycle. In 2050, total plastics is same ratio with total fish in the world. So therefore, I want create a machine learning model for trash recycle.</h4>
+        <h2>Upload your image here :)</h2>
+        <div class="custom-file mb-8">
+            <input type="file" class="custom-file-input" accept="image/*" onchange="loadFile()">
+            <label class="custom-file-label" for="customFile">Choose file</label>
+        </div>
+        <img id="output" width="250" />
+        <h4><b><div id="label-container"></div></b></h4>
+    </center>
+    <script type="text/javascript">
+    var loadFile = async function init() {
+        var output = document.getElementById("output");
+        output.src = URL.createObjectURL(event.target.files[0]);
+        output.onload = function() {
+            URL.revokeObjectURL(output.src)
+        }
+        
+        const url = "./my_model/";
+        const modelURL = url + "model.json";
+        const metadataURL = url + "metadata.json";
+        model = await tmImage.load(modelURL, metadataURL);
+        maxPredictions = model.getTotalClasses();
+        labelContainer = document.getElementById("label-container");
+        for (let i = 0; i < maxPredictions; i++) {
+            labelContainer.appendChild(document.createElement("div"));
+        }
+
+        const prediction = await model.predict(output);
+        for (let i = 0; i < maxPredictions; i++) {
+            const classPrediction = prediction[i].className + ": " + prediction[i].probability.toFixed(2);
+            labelContainer.childNodes[i].innerHTML = classPrediction;
+        }
+    };
+    </script>
+</body>
+</html>
